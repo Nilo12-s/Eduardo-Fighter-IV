@@ -13,40 +13,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install system dependencies and AIDL
-        run: |
-          sudo apt-get update --fix-missing
-          sudo apt-get install -y --no-install-recommends \
-            git zip unzip openjdk-17-jdk python3-pip python3-setuptools python3-wheel \
-            autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev \
-            aidl || true
-          pip install --upgrade pip wheel setuptools cython==0.29.36 buildozer
-
-      - name: Install Android SDK Build-Tools (aidl)
-        run: |
-          yes | sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0" || true
-          echo "$ANDROID_HOME/build-tools/34.0.0" >> $GITHUB_PATH
-
-      - name: Cache Buildozer SDK/NDK
+      - name: Cache Buildozer global directory
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.buildozer
-            .buildozer
-          key: buildozer-v2-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+          path: .buildozer_global
+          key: buildozer-global-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
           restore-keys: |
-            buildozer-v2-${{ runner.os }}-
+            buildozer-global-${{ runner.os }}-
 
-      - name: Build APK with Buildozer
-        run: buildozer -v android debug
+      - name: Build with Buildozer
+        uses: ArtemSBergmann/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer android debug
+          buildozer_version: master
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: eduardo-fighter-iv-apk
-          path: bin/*.apk
+          path: ${{ steps.buildozer.outputs.filename }}
