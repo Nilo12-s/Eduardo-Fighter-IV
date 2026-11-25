@@ -18,14 +18,19 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install system dependencies for Buildozer
+      - name: Install system dependencies and AIDL
         run: |
           sudo apt-get update --fix-missing
           sudo apt-get install -y --no-install-recommends \
             git zip unzip openjdk-17-jdk python3-pip python3-setuptools python3-wheel \
             autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev \
-            libtinfo6 || true
+            aidl || true
           pip install --upgrade pip wheel setuptools cython==0.29.36 buildozer
+
+      - name: Install Android SDK Build-Tools (aidl)
+        run: |
+          yes | sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0" || true
+          echo "$ANDROID_HOME/build-tools/34.0.0" >> $GITHUB_PATH
 
       - name: Cache Buildozer SDK/NDK
         uses: actions/cache@v4
@@ -33,9 +38,9 @@ jobs:
           path: |
             ~/.buildozer
             .buildozer
-          key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+          key: buildozer-v2-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
           restore-keys: |
-            buildozer-${{ runner.os }}-
+            buildozer-v2-${{ runner.os }}-
 
       - name: Build APK with Buildozer
         run: buildozer -v android debug
