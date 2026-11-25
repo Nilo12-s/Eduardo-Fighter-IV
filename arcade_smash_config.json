@@ -1,0 +1,32 @@
+{
+  "volume": 0.6,
+  "cpu_enabled": false,
+  "cpu_difficulty": "Média",
+  "stage_idx": 3,
+  "training_mode": false,
+  "last_join_ip": "172.89.1.198",
+  "p1_controls": {
+    "left": 97,
+    "right": 100,
+    "down": 115,
+    "jump": 119,
+    "up": 119,
+    "attack": 102,
+    "dodge": 101,
+    "grab": 103,
+    "ultimate": 113,
+    "cancel": 99
+  },
+  "p2_controls": {
+    "left": 1073741904,
+    "right": 1073741903,
+    "down": 1073741905,
+    "jump": 1073741906,
+    "up": 1073741906,
+    "attack": 1073742052,
+    "dodge": 1073742053,
+    "grab": 109,
+    "ultimate": 1073742054,
+    "cancel": 110
+  }
+}
